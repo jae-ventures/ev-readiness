@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "weights": {
+    "charging_access": 0.35,
+    "housing_type": 0.20,
+    "transit_proximity": 0.20,
+    "income_affordability": 0.25
+  },
+  "labels": [
+    { "min": 75, "max": 100, "label": "EV Ready" },
+    { "min": 50, "max": 74, "label": "Emerging" },
+    { "min": 25, "max": 49, "label": "Developing" },
+    { "min": 0,  "max": 24, "label": "Underserved" }
+  ]
+}
