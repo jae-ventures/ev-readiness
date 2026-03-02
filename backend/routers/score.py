@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from models.schemas import ReadinessResponse
 from services.afdc import fetch_nearby_stations, score_charging_access
 from services.scoring import compute_score, mock_components
+from services.census import fetch_census_data, score_housing_type, score_income_affordability
 
 router = APIRouter()
 
@@ -13,9 +14,20 @@ async def get_score(lat: float, lon: float):
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"AFDC API error: {str(e)}")
 
+    try:
+        census_data = await fetch_census_data(lat, lon)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Census API error: {str(e)}")
+
+
     # Start with mocks, override with real data as each service is wired in
     components = mock_components()
     components["charging_access"] = score_charging_access(stations)
+    
+    if census_data:
+            components["housing_type"] = score_housing_type(census_data)
+            components["income_affordability"] = score_income_affordability(census_data)
+    
 
     result = compute_score(components)
 
@@ -38,3 +50,10 @@ async def debug_stations(lat: float, lon: float, radius: float = 1.0):
             for s in stations
         ],
     }
+
+@router.get("/debug/census")
+async def debug_census(lat: float, lon: float):
+    data = await fetch_census_data(lat, lon)
+    if not data:
+        return {"error": "Could not retrieve census data for this location"}
+    return data

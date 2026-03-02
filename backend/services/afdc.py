@@ -2,7 +2,7 @@ import httpx
 
 from config import AFDC_API_KEY
 
-AFDC_NEAREST_BASE = "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json"
+AFDC_NEAREST_BASE = "https://developer.nlr.gov/api/alt-fuel-stations/v1/nearest.json"
 
 
 async def fetch_nearby_stations(
